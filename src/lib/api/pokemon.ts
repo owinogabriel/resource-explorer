@@ -8,7 +8,7 @@ const BASE_URL = "https://pokeapi.co/api/v2";
  */
 export class PokemonAPI {
   private static instance: PokemonAPI;
-  private cache = new Map<string, any>();
+  private cache = new Map<string, unknown>();
 
   /**
    * Get the singleton instance of PokemonAPI.
@@ -29,7 +29,7 @@ export class PokemonAPI {
   async fetchWithCache<T>(url: string, signal?: AbortSignal): Promise<T> {
     // Return cached response if available
     if (this.cache.has(url)) {
-      return this.cache.get(url);
+      return this.cache.get(url) as T;
     }
 
     const response = await fetch(url, { signal });
