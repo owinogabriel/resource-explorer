@@ -43,7 +43,7 @@ A modern, full-featured Pokémon directory built with Next.js 14, featuring adva
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone <https://github.com/owinogabriel/resource-explorer.git>
 cd resource-explorer
 
 # Install dependencies
