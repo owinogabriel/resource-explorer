@@ -1,4 +1,4 @@
-markdown# 🔥 Pokémon Explorer
+Pokémon Explorer
 
 A modern, full-featured Pokémon directory built with Next.js 14, featuring advanced search capabilities, favorites management, and a beautiful responsive design.
 
