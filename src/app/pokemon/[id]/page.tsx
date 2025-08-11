@@ -5,22 +5,21 @@ import { pokemonAPI } from "@/lib/api/pokemon";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PokemonDetailPage } from "@/components/Pokemon/PokemonDetailPage";
 
-interface PokemonPageProps {
-  params: {
-    id: string; // Pokémon ID from the dynamic route
-  };
-}
-
 /**
- * Dynamically generating page metadata for each Pokémon
- *
+ * TODO :
+ * - Generates dynamic metadata for the Pokémon detail page
+ * - Fetches Pokémon data to create SEO-optimized title and description
  */
 export async function generateMetadata({
   params,
-}: PokemonPageProps): Promise<Metadata> {
+}: {
+  // Promise params is now awaited
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   try {
-    // Fetch Pokémon data by ID
-    const pokemon = await pokemonAPI.getPokemonById(parseInt(params.id));
+    // Await the params promise to get the route parameters
+    const { id } = await params;
+    const pokemon = await pokemonAPI.getPokemonById(parseInt(id));
 
     return {
       title: `${
@@ -31,7 +30,7 @@ export async function generateMetadata({
         .join("/")} type Pokémon.`,
     };
   } catch {
-    // If fetch fails, set default "Not Found" metadata
+    // Return fallback metadata if Pokémon not found
     return {
       title: "Pokémon Not Found - Pokémon Explorer",
     };
@@ -39,30 +38,36 @@ export async function generateMetadata({
 }
 
 /**
- * Server Component that renders the Pokémon detail page
+ * Dynamic route page component for individual Pokémon details
+ * Handles Pokémon data fetching, validation, and rendering
  */
-export default async function PokemonPage({ params }: PokemonPageProps) {
-  const id = parseInt(params.id);
+export default async function PokemonPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id: idString } = await params;
+  const id = parseInt(idString);
 
-  // Handling invalid IDs
+  // Validate that the ID is a positive number
   if (isNaN(id) || id < 1) {
     notFound();
   }
 
   try {
-    // Fetch Pokémon data
+    // Fetch Pokémon data from the API
     const pokemon = await pokemonAPI.getPokemonById(id);
 
     return (
       <div className="container mx-auto px-4 py-8">
-        {/* Suspense left in place if child components lazy load sub-parts */}
+        {/* Suspense boundary for loading states */}
         <Suspense fallback={<LoadingSpinner size="lg" />}>
           <PokemonDetailPage pokemon={pokemon} />
         </Suspense>
       </div>
     );
   } catch {
-    // If Pokémon doesn't exist, show Next.js 404 page
+    // Show 404 page if Pokémon data cannot be fetched
     notFound();
   }
 }
