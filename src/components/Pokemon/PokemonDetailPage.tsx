@@ -9,7 +9,6 @@ import { FavoriteButton } from "./FavoriteButton";
 import { TypeBadge } from "@/components/common/TypeBadge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 
 interface PokemonDetailPageProps {
   pokemon: Pokemon;
