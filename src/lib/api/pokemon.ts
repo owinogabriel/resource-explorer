@@ -26,23 +26,29 @@ export class PokemonAPI {
    * @param url - Full API URL to fetch.
    * @param signal - Optional AbortSignal for canceling the request.
    */
-  async fetchWithCache<T>(url: string, signal?: AbortSignal): Promise<T> {
-    // Return cached response if available
+async fetchWithCache<T>(url: string, signal?: AbortSignal): Promise<T> {
     if (this.cache.has(url)) {
-      return this.cache.get(url) as T;
+        return this.cache.get(url) as T;
     }
 
-    const response = await fetch(url, { signal });
+    try {
+        const response = await fetch(url, { signal });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!response.ok) {
+            // Handle HTTP errors specifically
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        this.cache.set(url, data);
+        return data;
+
+    } catch (error) {
+        // Handle network and other exceptions here
+        console.error(`Failed to fetch from ${url}:`, error);
+        throw new Error(`Network Error: Failed to fetch data from ${url}`);
     }
-
-    const data = await response.json();
-    this.cache.set(url, data);
-    return data;
-  }
-
+}
   /**
    * Get a paginated list of Pokémon.
    * @param offset - Number of items to skip.
